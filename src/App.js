@@ -1,28 +1,45 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { createContext } from 'react';
 
-class App extends Component {
+const CounterContext = createContext();
+
+const withCount = (render) => {
+  class Wrapper extends React.Component {
+    render() {
+      let children = render();
+      children = React.createElement(CounterContext.Consumer, null, () => children);
+      return children;
+    }
+  }
+
+  return Wrapper;
+}
+
+const Counter = withCount(() => {
+  return <div>1</div>;
+});
+
+class Blank extends React.Component {
+  shouldComponentUpdate() {
+    return false;
+  }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+    return this.props.children;
   }
 }
+
+const App = () => {
+
+  return (
+    <CounterContext.Provider value={1}>
+      <div>
+        <Blank>
+          <Counter />
+        </Blank>
+      </div>
+    </CounterContext.Provider>
+  );
+}
+
 
 export default App;
